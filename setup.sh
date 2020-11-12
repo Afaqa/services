@@ -1,33 +1,20 @@
-# start kube
-echo " Starting kube"
-RETRYC=0
-minikube start --vm-driver=virtualbox
-while [ $? -ne 0 ] && [ $RETRYC -lt 5 ]; do
-  echo "Let's retry"
-  RETRYC=$(expr $RETRYC + 1)
-  minikube start --vm-driver=virtualbox
-done
+YELLOW="\033[1;33m"
+ORANGE="\033[0;33m"
+CLEAR="\033[0m"
 
-if [ $RETRYC -eq 5 ]; then
-  echo "Dead luck."
+echo $YELLOW "\t>> Starting kube" $CLEAR
+minikube start
+if [ $? -ne 0 ]; then
+  echo $ORANGE "\t>> Not started. Download minikube and docker"\
+      " then check disk space.\033[0" $CLEAR
   exit
 fi
 
-echo " Enable addons"
 minikube addons enable metallb
 
-# build images
-echo " Importing docker"
 eval $(minikube -p minikube docker-env)
-echo " Building nginx"
+echo $YELLOW "\t>> Building nginx" $CLEAR
 make -C srcs/nginx build
 
-# load pods
-echo " loading metallb config"
-kubectl apply -f srcs/kube/metallb.yaml
-echo " loading pods configs"
-kubectl apply -Rf srcs/kube/pods/
-
-# launch dashboard
-echo " launching dashboard"
+kubectl apply -f srcs/kube.yaml
 minikube dashboard &> /dev/null &

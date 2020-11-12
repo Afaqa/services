@@ -2,17 +2,17 @@ NAME = nginx
 VER = kubed
 
 all:
-	@echo "MAKE: build, run"
+	@echo "MAKE: build, run, exec, rm"
 
 build:
 	docker build . -t $(NAME):$(VER)
 
 run:
-	docker run --rm -p 443:443 -p 80:80 -td $(NAME):$(VER) --name $(NAME)
+	docker run --name $(NAME) --rm -p 443:443 -p 80:80 -td $(NAME):$(VER)
 
 exec:
-	docker exec -it $(NAME)-$(VER) sh
+	docker exec -it $(NAME) sh
 
 rm:
-	docker stop	$(NAME):$(VER)
+	docker stop	$(NAME)
 	docker rmi $(NAME):$(VER)

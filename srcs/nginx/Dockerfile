@@ -1,12 +1,11 @@
 FROM alpine:latest
 
-COPY ./srcs/default.conf ./srcs/index.html ./srcs/supervisord.conf ./
-RUN apk add openrc openssl openssh nginx vim bash sudo supervisor
+COPY srcs/index.html srcs/default.conf /var/www/
 
-RUN openssl req -x509 -newkey rsa:4096 -keyout /etc/ssl/nginx.key -out /etc/ssl/nginx.crt -days 365 -nodes -subj '/CN=itressa'
+RUN apk add openssl nginx && mkdir /run/nginx &&\
+    mv /var/www/default.conf /etc/nginx/conf.d/ &&\
+    openssl req -x509 -newkey rsa:4096 -keyout /etc/ssl/nginx.key \
+    -out /etc/ssl/nginx.crt -days 365 -nodes -subj '/CN=itressa'
 
-RUN mv /default.conf /etc/nginx/conf.d/ && mv /index.html /var/www/ \
-&& mkdir /run/nginx /var/run/sshd && mv /supervisord.conf /etc/supervisord.conf
-
-#launch server
-CMD		["usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+# launch in foreground
+CMD nginx -g 'daemon off;'
