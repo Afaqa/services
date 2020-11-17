@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine
 
 COPY srcs/index.html srcs/default.conf /var/www/
 

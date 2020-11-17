@@ -1,18 +1,18 @@
 # ----------------------------------- Load Balancer
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  namespace: metallb-system
-  name: config
-data:
-  config: |
-    address-pools:
-    - name: default
-      protocol: layer2
-      addresses:
-      - 192.168.99.199/32
-...
+# ---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   namespace: metallb-system
+#   name: config
+# data:
+#   config: |
+#     address-pools:
+#     - name: default
+#       protocol: layer2
+#       addresses:
+#       - 192.168.99.199/32
+# ...
 # ----------------------------------- Nginx
 ---
 apiVersion: apps/v1
@@ -55,3 +55,39 @@ spec:
     app: nginx
   type: LoadBalancer
 ...
+# ----------------------------------- Wordpress
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: wordpress
+# spec:
+#   selector:
+#     matchLabels:
+#       app: wordpress
+#   template:
+#     metadata:
+#       labels:
+#         app: wordpress
+#     spec:
+#       containers:
+#       - name: wordpress
+#         image: wordpress:kubed
+#         ports:
+#         - name: wordpress
+#           containerPort: 5050
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: wordpress
+# spec:
+#   ports:
+#   - name: wordpress
+#     port: 5050
+#     protocol: TCP
+#     targetPort: 5050
+#   selector:
+#     app: wordpress
+#   type: LoadBalancer
+# ...
