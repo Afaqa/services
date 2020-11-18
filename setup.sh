@@ -5,6 +5,7 @@ CLEAR="\033[0m"
 minikube stop
 minikube delete
 echo $YELLOW "\t>> Starting kube" $CLEAR
+minikube config set WantUpdateNotification false
 minikube config set disk-size 4096
 minikube start
 if [ $? -ne 0 ]; then
@@ -16,6 +17,8 @@ fi
 minikube addons enable metallb
 
 eval $(minikube -p minikube docker-env)
+echo $YELLOW "\t>> Building mysql" $CLEAR
+make -C srcs/mysql build
 echo $YELLOW "\t>> Building nginx" $CLEAR
 make -C srcs/nginx build
 echo $YELLOW "\t>> Building wordpress" $CLEAR

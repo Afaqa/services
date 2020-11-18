@@ -1,18 +1,99 @@
 # ----------------------------------- Load Balancer
-# ---
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   namespace: metallb-system
-#   name: config
-# data:
-#   config: |
-#     address-pools:
-#     - name: default
-#       protocol: layer2
-#       addresses:
-#       - 192.168.99.199/32
-# ...
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - 192.168.99.192/28
+...
+# ----------------------------------- Volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: wordpress
+    tier: mysql
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 512Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:kubed
+        name: mysql
+        # env:
+        # - name: MYSQL_ROOT_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: mysql-pass
+        #       key: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wp-pv-claim
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 512Mi
+...
 # ----------------------------------- Nginx
 ---
 apiVersion: apps/v1
@@ -56,38 +137,38 @@ spec:
   type: LoadBalancer
 ...
 # ----------------------------------- Wordpress
-# ---
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: wordpress
-# spec:
-#   selector:
-#     matchLabels:
-#       app: wordpress
-#   template:
-#     metadata:
-#       labels:
-#         app: wordpress
-#     spec:
-#       containers:
-#       - name: wordpress
-#         image: wordpress:kubed
-#         ports:
-#         - name: wordpress
-#           containerPort: 5050
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: wordpress
-# spec:
-#   ports:
-#   - name: wordpress
-#     port: 5050
-#     protocol: TCP
-#     targetPort: 5050
-#   selector:
-#     app: wordpress
-#   type: LoadBalancer
-# ...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+      - name: wordpress
+        image: wordpress:kubed
+        ports:
+        - name: wordpress
+          containerPort: 5050
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+spec:
+  ports:
+  - name: wordpress
+    port: 5050
+    protocol: TCP
+    targetPort: 5050
+  selector:
+    app: wordpress
+  type: LoadBalancer
+...
