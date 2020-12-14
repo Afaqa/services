@@ -1,7 +1,7 @@
 FROM alpine
 
 COPY /my.cnf ./etc/mysql/
-COPY initdb.sh onload.sh /
+COPY initdb.sh onload.sh start.sql /
 
 RUN apk add mariadb mysql-client
 
