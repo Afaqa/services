@@ -1,0 +1,10 @@
+resources:
+- metallb.yaml
+- volume.yaml
+- mysql.yaml
+- nginx.yaml
+- wordpress.yaml
+# - influx.yaml
+# - ftps.yaml
+# - grafana.yaml
+# - phpmyadmin.yaml

@@ -5,16 +5,14 @@ CLEAR="\033[0m"
 minikube stop
 minikube delete
 echo $YELLOW "\t>> Starting kube" $CLEAR
-minikube config set WantUpdateNotification false
-minikube config set disk-size 4096
-minikube start
+minikube start --addons=metallb --vm-driver=virtualbox --memory=2000 --disk-size=4096
 if [ $? -ne 0 ]; then
   echo $ORANGE "\t>> Not started. Download minikube and docker"\
       " then check disk space.\033[0" $CLEAR
   exit
 fi
 
-minikube addons enable metallb
+#minikube addons enable metallb
 
 eval $(minikube -p minikube docker-env)
 echo $YELLOW "\t>> Building mysql" $CLEAR
@@ -25,6 +23,7 @@ echo $YELLOW "\t>> Building wordpress" $CLEAR
 make -C srcs/wordpress build
 
 echo $YELLOW "\t>> Kustomization" $CLEAR
-kubectl apply -f srcs/kube.yaml
+# kubectl apply -f srcs/kube.yaml
+kubectl apply -k srcs/dedkube
 minikube dashboard &> /dev/null &
 echo $ORANGE "Finished!" $CLEAR
