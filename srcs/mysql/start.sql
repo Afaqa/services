@@ -1,3 +1,4 @@
-GRANT ALL PRIVILEGES ON *.* TO 'wp_user'@'localhost' IDENTIFIED BY 'password_wp';
+DROP DATABASE IF EXISTS test;
 CREATE DATABASE wordpress;
+GRANT ALL PRIVILEGES ON *.* TO 'wp_user'@'%' IDENTIFIED BY 'password_wp';
 FLUSH PRIVILEGES;

@@ -17,14 +17,12 @@ fi
 eval $(minikube -p minikube docker-env)
 echo $YELLOW "\t>> Building mysql" $CLEAR
 make -C srcs/mysql build
-# docker build ../td/ded_services/srcs/mysql -t mysql:kubed
 echo $YELLOW "\t>> Building nginx" $CLEAR
 make -C srcs/nginx build
 echo $YELLOW "\t>> Building wordpress" $CLEAR
 make -C srcs/wordpress build
 
-echo $YELLOW "\t>> Kustomization" $CLEAR
-# kubectl apply -f srcs/kube.yaml
-kubectl apply -k srcs/kkube
 minikube dashboard &> /dev/null &
+echo $YELLOW "\t>> Kustomization" $CLEAR
+kubectl apply -k srcs/kube
 echo $ORANGE "Finished!" $CLEAR
