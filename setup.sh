@@ -12,15 +12,11 @@ if [ $? -ne 0 ]; then
   exit
 fi
 
-#minikube addons enable metallb
-
 eval $(minikube -p minikube docker-env)
-echo $YELLOW "\t>> Building mysql" $CLEAR
-make -C srcs/mysql build
-echo $YELLOW "\t>> Building nginx" $CLEAR
-make -C srcs/nginx build
-echo $YELLOW "\t>> Building wordpress" $CLEAR
-make -C srcs/wordpress build
+for service in mysql nginx wordpress phpmyadmin ; do
+    echo $YELLOW "\t>> Building $service" $CLEAR
+    make -C srcs/$service build
+done
 
 minikube dashboard &> /dev/null &
 echo $YELLOW "\t>> Kustomization" $CLEAR

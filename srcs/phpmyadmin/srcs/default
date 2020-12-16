@@ -1,0 +1,19 @@
+server {
+		listen 5000;
+		listen [::]:5000;
+
+        server_name _;
+        root /var/www;
+		autoindex off;
+
+        index index.php index.html;
+        location ~ ^/(.+\.php)$ {
+            try_files $uri =404;
+            fastcgi_pass      127.0.0.1:9000;
+            fastcgi_index     index.php;
+            include           fastcgi.conf;
+        }
+
+        location ~* ^/(.+\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))$ {
+        }
+}
