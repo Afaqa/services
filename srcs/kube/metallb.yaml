@@ -3,10 +3,12 @@ kind: ConfigMap
 metadata:
   namespace: metallb-system
   name: config
+  annotations:
+    metallb.universe.tf/allow-shared-ip: share-ip-key
 data:
   config: |
     address-pools:
     - name: default
       protocol: layer2
       addresses:
-      - 192.168.99.192/28
+      - 192.168.99.21/32
