@@ -1,32 +1,14 @@
 FROM alpine
 
-ARG NXDIR=/etc/nginx
-ARG HOME=/var/www/
-
-COPY srcs/default.conf /var/www/
-COPY srcs/fastcgi.sh srcs/onload.sh srcs/autoindex.sh /usr/bin/
-COPY srcs/initdb.sh srcs/phpfpminit.sh /tmp/
-COPY srcs/phpfpminit.sh /tmp/
+COPY srcs/favicon.ico /var/www/
+COPY srcs/onload.sh /var/
+COPY srcs/download-wp.sh srcs/phpfpminit.sh /tmp/
 COPY srcs/nginx.conf /etc/nginx/
-RUN chmod 755 /usr/bin/fastcgi.sh /usr/bin/onload.sh /usr/bin/autoindex.sh
 
-# make site dir
-RUN mkdir -p $HOME;
+RUN apk add nginx mariadb-client php php7-fpm php7-json php7-phar php7-mbstring php7-mysqli curl
+RUN /tmp/phpfpminit.sh; /tmp/download-wp.sh
+RUN addgroup -S www; adduser -HDG www www;
+RUN chown -R www:www /var/www /var/lib/nginx; chmod -R 755 /var/www /var/lib/nginx;
 
-RUN apk add openssl nginx mariadb mysql-client php php7-fpm php7-json php7-phar php7-mbstring php7-mysqli curl && mkdir /run/nginx &&\
-#RUN apk add openssl nginx mysql-client php php7-fpm php7-json php7-phar php7-mbstring php7-mysqli curl && mkdir /run/nginx &&\
-    rm /etc/nginx/conf.d/default.conf &&\
-    openssl req -x509 -newkey rsa:4096 -keyout /etc/ssl/nginx.key \
-    -out /etc/ssl/nginx.crt -days 365 -nodes -subj '/CN=itressa'
-
-# init php-fpm
-RUN /tmp/phpfpminit.sh
-
-# create database
-RUN /tmp/initdb.sh
-
-# grant permissions
-RUN addgroup -S www; adduser -HDG www www; chown -R www:www $HOME /var/lib/nginx; chmod -R 755 $HOME /var/lib/nginx;
-
-CMD onload.sh
-WORKDIR $HOME
+WORKDIR /var/www
+CMD /var/onload.sh
