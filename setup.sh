@@ -13,7 +13,7 @@ if [ $? -ne 0 ]; then
 fi
 
 eval $(minikube -p minikube docker-env)
-for service in mysql nginx wordpress phpmyadmin ftps ; do
+for service in mysql nginx wordpress phpmyadmin ftps influx grafana; do
     echo $YELLOW "\t>> Building $service" $CLEAR
     make -C srcs/$service build
 done
