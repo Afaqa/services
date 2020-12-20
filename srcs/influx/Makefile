@@ -1,4 +1,4 @@
-NAME = ftps
+NAME = influx
 VER = kubed
 
 all:
@@ -8,7 +8,7 @@ build:
 	docker build . -t $(NAME):$(VER)
 
 run:
-	docker run --name $(NAME) --rm -p 21:21 -td $(NAME):$(VER)
+	docker run --name $(NAME) --rm -p 8086:8086 -td $(NAME):$(VER)
 
 exec:
 	docker exec -it $(NAME) sh
