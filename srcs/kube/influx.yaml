@@ -33,21 +33,23 @@ spec:
       - name: influx
         image: influx:kubed
         ports:
-        - containerPort: 3306
+        - containerPort: 8086
           name: influx
         volumeMounts:
         - name: influx-volume
-          mountPath: /var/lib/mysql
+          mountPath: /var/lib/influx
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: influx
+  annotations:
+    metallb.universe.tf/allow-shared-ip: share-ip-key
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: influx
   ports:
   - protocol: TCP
-    port: 3306
-    targetPort: 3306
+    port: 8086
+    targetPort: 8086
