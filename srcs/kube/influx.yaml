@@ -29,15 +29,21 @@ spec:
       - name: influx-volume
         persistentVolumeClaim:
           claimName: influx-pv-claim
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
       containers:
       - name: influx
         image: influx:kubed
+        imagePullPolicy: Never
         ports:
         - containerPort: 8086
           name: influx
         volumeMounts:
         - name: influx-volume
           mountPath: /var/lib/influx
+        - name: dockersock
+          mountPath: /var/run/docker.sock
 ---
 apiVersion: v1
 kind: Service
