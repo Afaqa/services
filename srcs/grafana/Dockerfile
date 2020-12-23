@@ -13,6 +13,4 @@ EXPOSE 3000
 
 WORKDIR /grafana-7.3.6
 
-COPY custom.ini conf/
-
-CMD /grafana-7.3.6/bin/grafana-server web
+CMD /grafana-7.3.6/bin/grafana-server
