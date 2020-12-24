@@ -9,8 +9,10 @@ apk add glibc-2.32-r0.apk;
 RUN wget https://dl.grafana.com/oss/release/grafana-7.3.6.linux-amd64.tar.gz; \
 tar -zxf grafana-7.3.6.linux-amd64.tar.gz; rm grafana-7.3.6.linux-amd64.tar.gz;
 
-EXPOSE 3000
-
 WORKDIR /grafana-7.3.6
+
+COPY grafana.db data/
+
+EXPOSE 3000
 
 CMD /grafana-7.3.6/bin/grafana-server

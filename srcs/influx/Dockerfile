@@ -5,8 +5,8 @@ COPY ./influxdb-1.8.3.tar.gz /
 
 RUN apk update; apk upgrade;
 
-ADD https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub /etc/apk/keys/sgerrand.rsa.pub;
-ADD https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.32-r0/glibc-2.32-r0.apk /glibc-2.32-r0.apk;
+ADD https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub /etc/apk/keys/sgerrand.rsa.pub
+ADD https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.32-r0/glibc-2.32-r0.apk /glibc-2.32-r0.apk
 RUN apk add glibc-2.32-r0.apk;
 
 RUN tar xfz influxdb-1.8.3.tar.gz; \
