@@ -1,4 +1,3 @@
-php-fpm7
 set_error() { return 1;}
 set_error;
 until [ $? -eq 0 ]
@@ -15,4 +14,4 @@ if ! wp core is-installed ; then
         wp user create $NAME $NAME@itressa.test --role=subscriber --user_pass=$NAME
     done
 fi
-nginx -g 'daemon off;'
+supervisord

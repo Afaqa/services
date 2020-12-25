@@ -1,6 +1,7 @@
 FROM alpine
 
 RUN apk update; apk upgrade;
+RUN apk add supervisor;
 
 RUN wget -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub; \
 wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.32-r0/glibc-2.32-r0.apk; \
@@ -12,7 +13,8 @@ tar -zxf grafana-7.3.6.linux-amd64.tar.gz; rm grafana-7.3.6.linux-amd64.tar.gz;
 WORKDIR /grafana-7.3.6
 
 COPY grafana.db data/
+COPY supervisord.conf /etc/
 
 EXPOSE 3000
 
-CMD /grafana-7.3.6/bin/grafana-server
+CMD supervisord
