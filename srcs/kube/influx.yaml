@@ -1,60 +1,60 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: influx-pv-claim
+  name: influxdb-pv-claim
 spec:
-  storageClassName: influx-pv
+  storageClassName: influxdb-pv
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 512Mi
+      storage: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: influx
+  name: influxdb
 spec:
   selector:
     matchLabels:
-      app: influx
+      app: influxdb
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: influx
+        app: influxdb
     spec:
       volumes:
-      - name: influx-volume
+      - name: influxdb-volume
         persistentVolumeClaim:
-          claimName: influx-pv-claim
+          claimName: influxdb-pv-claim
       - name: dockersock
         hostPath:
           path: /var/run/docker.sock
       containers:
-      - name: influx
-        image: influx:kubed
+      - name: influxdb
+        image: influxdb:kubed
         imagePullPolicy: Never
         ports:
         - containerPort: 8086
-          name: influx
+          name: influxdb
         volumeMounts:
-        - name: influx-volume
-          mountPath: /var/lib/influx
+        - name: influxdb-volume
+          mountPath: /var/lib/influxdb
         - name: dockersock
           mountPath: /var/run/docker.sock
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: influx
+  name: influxdb
   annotations:
     metallb.universe.tf/allow-shared-ip: share-ip-key
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
-    app: influx
+    app: influxdb
   ports:
   - protocol: TCP
     port: 8086

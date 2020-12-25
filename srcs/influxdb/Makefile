@@ -1,4 +1,4 @@
-NAME = influx
+NAME = influxdb
 VER = kubed
 
 all:

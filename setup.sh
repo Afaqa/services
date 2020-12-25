@@ -5,7 +5,7 @@ CLEAR="\033[0m"
 minikube stop
 minikube delete
 echo $YELLOW "\t>> Starting kube" $CLEAR
-minikube start --addons=metallb --vm-driver=virtualbox --memory=2000 --disk-size=10240
+minikube start --addons=metallb --vm-driver=virtualbox --memory=2200 --disk-size=10240
 if [ $? -ne 0 ]; then
   echo $ORANGE "\t>> Not started. Download minikube and docker"\
       " then check disk space.\033[0" $CLEAR
@@ -13,7 +13,7 @@ if [ $? -ne 0 ]; then
 fi
 
 eval $(minikube -p minikube docker-env)
-for service in mysql nginx wordpress phpmyadmin ftps influx grafana; do
+for service in mysql nginx wordpress phpmyadmin ftps influxdb grafana; do
     echo $YELLOW "\t>> Building $service" $CLEAR
     make -C srcs/$service build
 done
